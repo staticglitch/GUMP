@@ -65,8 +65,10 @@ class GUMP
 				$all_validators[$mixed[0]] = $rules;
 			} else {
 				$filters = str_replace(',', '|', $mixed[0]);
-				$all_validators[$mixed[1]] = $rules;
 				$all_filters[$mixed[1]] = $filters;
+				if ($rules) {
+					$all_validators[$mixed[1]] = $rules;
+				}
 			}
 		}
 		
