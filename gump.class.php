@@ -48,14 +48,32 @@ class GUMP
 	 * Shorthand method for inline validation
 	 *
 	 * @param array $data The data to be validated
-	 * @param array $validators The GUMP validators
+	 * @param array $validators The GUMP validators with filter shorthand
 	 * @return mixed True(boolean) or the array of error messages
 	 */
 	public static function is_valid(array $data, array $validators)
 	{
+		
+		$all_validators = array();
+		$all_filters = array();
+
+		foreach ($validators as $mixed => $rules) {
+			$mixed = str_replace(', ', ',', $mixed);
+			$mixed = explode(' ', trim($mixed));
+
+			if (count($mixed) == 1) {
+				$all_validators[$mixed[0]] = $rules;
+			} else {
+				$filters = str_replace(',', '|', $mixed[0]);
+				$all_validators[$mixed[1]] = $rules;
+				$all_filters[$mixed[1]] = $filters;
+			}
+		}
+		
 		$gump = new Gump();
 
-		$gump->validation_rules($validators);
+		$gump->validation_rules($all_validators);
+		$gump->filter_rules($all_filters);
 
 		if($gump->run($data) === false) {
 			return $gump->get_readable_errors(false);
